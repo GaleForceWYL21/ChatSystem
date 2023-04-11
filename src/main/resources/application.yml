@@ -1,0 +1,20 @@
+server:
+  port: 8828
+  servlet:
+    context-path: /dev
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: {url}
+    username: {username}
+    password: {password}
+    type: com.alibaba.druid.pool.DruidDataSource
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.wyl.gpt
