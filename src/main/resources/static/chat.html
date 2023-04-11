@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3.5-turbo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%;
+            text-align: center;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            border: black;
+        }
+
+        .container {
+            /*max-width: 1000px;*/
+            width: 100%;
+            margin: 0 auto;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        .chatbox {
+            /*border: 1px solid #ccc;*/
+            border-radius: 1px;
+            padding-bottom: 100px;
+            height: 100%;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .chatbox p {
+            margin: 0 0 10px;
+        }
+
+        .inputbox {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            /*margin-bottom: 20px;*/
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 2px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+
+        .inputbox textarea {
+            flex-grow: 1;
+            margin-right: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+            resize: none; /* 禁止调整大小 */
+            overflow-y: auto; /* 当内容超出时显示滚动条 */
+            min-height: 40px; /* 设置最小高度 */
+            max-height: 30%; /* 设置最大高度为整个页面的30% */
+        }
+
+
+        .inputbox input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .answerBox {
+            display: flex;
+            background-color: #f7f7f8;
+            border-bottom: 1px solid #d9d9e3;
+        }
+
+        .answer {
+            display: inline-block;
+            background-color: inherit;
+            padding-top: 10px;
+            padding-bottom: 40px;
+            padding-left: 30px;
+            padding-right: 5px;
+
+        }
+
+        .answerText {
+
+            display: inline-block;
+            background-color: inherit;
+            padding-left: 30px;
+            padding-top: 15px;
+            padding-bottom: 40px;
+            padding-right: 30px;
+            color: #3e4554;
+            white-space: pre-wrap;
+            line-height: 1.5; /* 设置行间距为 1.5 倍字体大小 */
+            letter-spacing: 0.05em;
+            font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+        }
+
+        .questionBox {
+            display: flex;
+            background-color: white;
+            border-bottom: 1px solid #d9d9e3;
+
+
+        }
+
+        .question {
+            display: inline-block;
+            background-color: inherit;
+            padding-top: 10px;
+            padding-bottom: 40px;
+            padding-left: 30px;
+            padding-right: 5px;
+
+        }
+
+        .questionText {
+
+            display: inline-block;
+            background-color: inherit;
+            padding-left: 30px;
+            padding-top: 15px;
+            padding-bottom: 40px;
+            padding-right: 30px;
+            color: #3e4554;
+            line-height: 1.5; /* 设置行间距为 1.5 倍字体大小 */
+            letter-spacing: 0.03em; /* 设置字母间距为 0.1em */
+            font-family: Söhne, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+
+        img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .black {
+            color: black;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            font-family: Söhne Mono, Monaco, Andale Mono, Ubuntu Mono, monospace !important;
+        }
+        /*.top {*/
+        /*    font-size: 16px;*/
+        /*    text-align: center;*/
+        /*    background-color: #343540;*/
+        /*    border-bottom: 1px solid #5e5d66;*/
+        /*    height: 42px;*/
+        /*}*/
+        .top {
+            font-size: 16px;
+            text-align: center;
+            background-color: #343540;
+            border-bottom: 1px solid #5e5d66;
+            height: 42px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+
+
+        .top >*{
+            padding-top: 12px;
+            color: #dad9e2;
+        }
+        .back{
+            display: inline-block;
+             float: left;
+            padding-left: 10px;
+        }
+
+        .name{
+            display: inline-block;
+            text-indent: -1em;
+        }
+
+        .more{
+            display: inline-block;
+            float: right;
+            padding-right: 10px;
+        }
+
+        #send{
+            background-color: #67ad5b;
+        }
+
+        .options{
+            font-size: 12px;
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+    </style>
+</head>
+<body>
+<!--仍有许多不足，欢迎指点和请教-->
+<!--联系方式：邮箱：1205443857@qq.com-->
+<div class="container">
+    <div id="tokenModal" class="modal">
+        <div class="modal-content">
+            <h2>内测资格验证</h2>
+            <p>请输入您的内测邀请码:</p>
+            <input type="password" id="tokenInput" placeholder="Enter token">
+            <button id="submitToken">Submit</button>
+        </div>
+    </div>
+    <div class="top" >
+        <div class="back"  onclick="alert('暂未开放.....')"><div>&lt;back</div></div>
+        <div class="name" ><div>ChatGPT 3.5 Turbo</div></div>
+        <div class="more" onclick="alert('暂未开放.....')"><div>···</div></div>
+    </div>
+    <div class="options" style="color: rgb(197, 1, 1); margin-top: 45px">
+        注意事项：服务器需要访问外网，所以可能会出现延迟，如果长时间无响应，请刷新页面。遇到意料之外的内容，请联系邮箱1205443857@qq.com
+    </div>
+    <div class="options" style="color: rgb(125, 129, 128);border-bottom: 1px solid #d9d9e3;">
+        贴士：如果想重新开始话题，刷新洁面即可
+    </div>
+    <div class="chatbox" id="chatbox">
+<!--                <div class="questionBox">-->
+<!--                    <div class="question"><img src="./user.png" alt="user"></div>-->
+<!--                    <div class="questionText">你好</div>-->
+<!--                </div>-->
+<!--                <div class="answerBox">-->
+<!--                    <div class="answer"><img src="./gpt.png" alt="gpt"></div>-->
+<!--                    <div class="answerText">你好！有什么需要我的地方吗？<br>1234565<br>1234565<br>1234565<br>1234565</div>-->
+<!--                </div>-->
+
+<!--                <div class="questionBox">-->
+<!--                    <div class="question"><img src="./user.png" alt="user"></div>-->
+<!--                    <div class="questionText">请用java生成冒泡排序</div></div>-->
+<!--                <div class="answerBox">-->
+<!--                    <div class="answer"><img src="./gpt.png" alt="gpt"></div>-->
+<!--                    <div class="answerText">以下是用Java实现的冒泡排序算法：<br><br>```java<br>public static void bubbleSort(int[] arr) {<br>    int n = arr.length;<br>    for (int i = 0; i &lt; n - 1; i++) {<br>        for (int j = 0; j &lt; n - i - 1; j++) {<br>            if (arr[j] &gt; arr[j + 1]) {<br>                int temp = arr[j];<br>                arr[j] = arr[j + 1];<br>                arr[j + 1] = temp;<br>            }<br>        }<br>    }<br>}<br>```<br><br>说明：<br><br>1. 内层循环从0开始，每次比较相邻的两个元素，如果前一个元素大于后一个元素，则交换它们的位置，这样每次内层循环都会把最大的元素放到最后。<br><br>2. 外层循环控制内层循环的次数，每次内层循环结束后，最大的元素一定在最后一个位置，因此外层循环每次减去1。<br><br>3. 冒泡排序的时间复杂度为O(n^2)，适用于少量数据的排序，但是对于大量数据的排序效率较低。</div></div>-->
+    </div>
+    <div class="inputbox">
+        <!--            <input type="text" id="input" placeholder="请输入你的对话...">-->
+        <textarea id="input" placeholder="请输入你的对话..." rows="1"></textarea>
+        <input type="submit" id="send" value="发送" onclick="sendMessage()">
+    </div>
+
+</div>
+
+<script>
+    window.addEventListener('load', function () {
+        adjustTextareaHeight(document.getElementById("input"))
+    });
+
+    // Your JavaScript code here
+    document.addEventListener("DOMContentLoaded", function () {
+        const correctToken = "8a4b79Q6";
+        const tokenModal = document.getElementById("tokenModal");
+        const tokenInput = document.getElementById("tokenInput");
+        const submitToken = document.getElementById("submitToken");
+
+        // Show the modal when the page is loaded
+        tokenModal.style.display = "block";
+
+        submitToken.addEventListener("click", function () {
+            if (tokenInput.value === correctToken) {
+                alert("验证成功，欢迎使用！");
+                tokenModal.style.display = "none";
+            } else {
+                alert("内测码错误，请重新输入");
+                tokenInput.value = "";
+            }
+        });
+    });
+
+
+
+    var msg = {
+        role: "",
+        content: ""
+    };
+    var msgList = [];
+
+    document.getElementById("input").addEventListener("input", function (event) {
+        adjustTextareaHeight(event.target);
+    });
+
+    //enter发送消息
+    // document.addEventListener("keydown", function (event) {
+    //     if (event.key === "Enter" && document.getElementById("input").value.length > 0) {
+    //         event.preventDefault(); // 阻止默认换行行为
+    //         sendMessage();
+    //         document.getElementById("input").value = ''; // 清除textarea内容
+    //         adjustTextareaHeight(document.getElementById("input")); // 更新高度
+    //     }
+    // });
+    // document.addEventListener("keydown",
+    //     adjustTextareaHeight(document.getElementById("input")) // 更新高度
+    // );
+
+
+    //textarea自适应高度
+    function adjustTextareaHeight(textarea) {
+        const maxHeight = window.innerHeight * 0.2;
+        textarea.style.height = "auto"; // 先重置高度
+        const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+        textarea.style.height = newHeight + "px";
+    }
+
+
+    function sendMessage() {
+
+        //将按钮设为不可选中
+        setButtonType();
+
+        //如果输入框为空，不发送
+        if (document.getElementById("input").value.length === 0) {
+            return;
+        }
+
+        // Get input value
+        var input = document.getElementById("input").value;
+        msg = {...msg, role: "user", content: input};
+        msgList.push({...msg});
+        document.getElementById("input").value = '';
+
+        //清除textarea内容,并且重制高度
+        document.getElementById("input").value = '';
+        adjustTextareaHeight(document.getElementById("input"));
+
+        console.log(1, msg.content);
+
+        // 获取聊天框元素
+        var chatbox = document.getElementById("chatbox");
+
+        // 创建新的 .questionBox 元素
+        var questionBox = document.createElement("div");
+        questionBox.classList.add("questionBox");
+
+        // 创建新的 .question 元素并添加图像
+        var question = document.createElement("div");
+        question.classList.add("question");
+        var img = document.createElement("img");
+        img.src = "./user.png";
+        img.alt = "user";
+        question.appendChild(img);
+
+        // 创建新的 .questionText 元素并设置文本
+        var questionText = document.createElement("div");
+        // textarea.style.height
+        questionText.classList.add("questionText");
+        questionText.innerText = input;
+
+        // 将新创建的 .question 和 .questionText 元素添加到 .questionBox 中
+        questionBox.appendChild(question);
+        questionBox.appendChild(questionText);
+
+        // 将新的 .questionBox 元素添加到聊天框中
+        chatbox.appendChild(questionBox);
+
+        // 将问答滚动到底部
+        chatbox.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+
+        //动态调整总对话长度，保证符合接口入参规则
+        msgList = check(msgList);
+
+        // Send input to backend and get response
+        postHttp(msgList, function (resp) {
+            console.log(2, resp)
+
+            // 获取聊天框元素
+            var chatbox = document.getElementById("chatbox");
+
+            // 创建新的 .questionBox 元素
+            var answerBox = document.createElement("div");
+            answerBox.classList.add("answerBox");
+
+            // 创建新的 .question 元素并添加图像
+            var answer = document.createElement("div");
+            answer.classList.add("answer");
+            var img = document.createElement("img");
+            img.src = "./gpt.png";
+            img.alt = "gpt";
+            answer.appendChild(img);
+
+            // 创建新的 .questionText 元素并设置文本
+            var answerText = document.createElement("div");
+            answerText.classList.add("answerText");
+
+            //将‘’中的内容替换成粗体文字
+            console.log(444, resp, resp.replace(/`([^`]+)`/g, "<span class='black'>$1</span>"));
+            resp = resp.replace(/```([^`]+)```/g, "<span class='black'>$1</span>");
+            resp = resp.replace(/`([^`]+)`/g, "<span class='black'>$1</span>");
+            answerText.innerHTML = resp;
+
+            // 将新创建的 .question 和 .questionText 元素添加到 .questionBox 中
+            answerBox.appendChild(answer);
+            answerBox.appendChild(answerText);
+
+            // 将新的 .questionBox 元素添加到聊天框中
+            chatbox.appendChild(answerBox);
+
+            //滚动条实时处于最下
+            chatbox.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+
+            msg = {...msg, role: "assistant", content: resp.replaceAll('\n', '')};
+            msgList.push({...msg});
+
+            setButtonType();
+        });
+    }
+
+    function postHttp(params, callback) {
+        // params格式为对象
+        var url = "http://localhost:8828/dev/chat/gpt3.5"
+        let xhr = new XMLHttpRequest();
+        xhr.open('post', url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        var msgToString = JSON.stringify(params);
+        console.log(3, msg, msgToString)
+        xhr.send(msgToString);
+        //JSON.stringify 方法将某个对象转换成 JSON 字符串形式
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                callback(xhr.responseText);
+            }
+        }
+    }
+
+    function setButtonType(){
+        var button = document.getElementById("send");
+        if(button.disabled == false){
+            button.value = "发送中...";
+            button.disabled = true;
+            button.style.backgroundColor = "gray";
+            button.style.color = "white";
+            return;
+        }
+        button.disabled = false;
+        button.value = "发送";
+        button.style.backgroundColor = "#67ad5b";
+        button.style.color = "white";
+    }
+
+    function check(msgList) {
+        var totalString = 0;
+        for (i = 0; i < msgList.length; i++) {
+            totalString += msgList[i].content.length;
+        }
+        while (totalString > 2000) {
+            msgList.shift();
+            totalString -= msgList[0].content.length;
+        }
+        return msgList;
+    }
+
+</script>
+
+</body>
+</html>
